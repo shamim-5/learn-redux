@@ -1,82 +1,101 @@
-// state - count:0
-// action - increment, decrement, reset
-// reducer - for logic(action) handle
-// store - for store state and dispatch work
+const { createStore, combineReducers } = require("redux");
 
-const { createStore } = require("redux");
+// products constants
+const GET_PRODUCTS = "GET_PRODUCTS";
+const ADD_PRODUCTS = "ADD_PRODUCTS";
 
-// CONSTANTS
-const INCREMENT = "INCREMENT";
-const DECREMENT = "DECREMENT";
-const RESET = "RESET";
-const INCREMENT_BY_VALUE = "INCREMENT_BY_VALUE";
+// cart constants
+const GET_CART_ITEMS = "GET_CART_ITEMS";
+const ADD_CART_ITEMS = "ADD_CART_ITEMS";
 
-// state
-const initialState = {
-  count: 0,
+// product states
+const initialProductState = {
+  products: ["sugar", "salt"],
+  numberOfProducts: 2,
 };
 
-// action
-const incrementCounterAction = () => {
+// cart states
+const initialCartState = {
+  cart: ["sugar"],
+  numberOfProducts: 1,
+};
+
+// product actions
+const getProducts = () => {
   return {
-    type: INCREMENT,
+    type: GET_PRODUCTS,
   };
 };
-const decrementCounterAction = () => {
+const addProudct = (product) => {
   return {
-    type: DECREMENT,
-  };
-};
-const resetCounterAction = () => {
-  return {
-    type: RESET,
-  };
-};
-const incrementCounterByValue = (value) => {
-  return {
-    type: INCREMENT_BY_VALUE,
-    payload: value,
+    type: ADD_PRODUCTS,
+    payload: product,
   };
 };
 
-// reducer
-const counterReducer = (state = initialState, action) => {
+// cart actions
+const getCart = () => {
+  return {
+    type: GET_CART_ITEMS,
+  };
+};
+const addCart = (product) => {
+  return {
+    type: ADD_CART_ITEMS,
+    payload: product,
+  };
+};
+
+// productReducer
+const productReducer = (state = initialProductState, action) => {
   switch (action.type) {
-    case INCREMENT:
+    case GET_PRODUCTS:
       return {
         ...state,
-        count: state.count + 1,
       };
-    case DECREMENT:
+    case ADD_PRODUCTS:
       return {
-        ...state,
-        count: state.count - 1,
-      };
-    case RESET:
-      return {
-        ...state,
-        count: 0,
-      };
-    case INCREMENT_BY_VALUE:
-      return {
-        ...state,
-        count: state.count + action.payload,
+        products: [...state.products, action.payload],
+        numberOfProducts: state.numberOfProducts + 1,
       };
 
     default:
-      state;
+      return state;
   }
 };
 
-// store
-const store = createStore(counterReducer);
+// cartReducer
+const cartReducer = (state = initialCartState, action) => {
+  switch (action.type) {
+    case GET_CART_ITEMS:
+      return {
+        ...state,
+      };
+    case ADD_CART_ITEMS:
+      return {
+        cart: [...state.cart, action.payload],
+        numberOfProducts: state.numberOfProducts + 1,
+      };
 
+    default:
+      return state;
+  }
+};
+
+// store can work only one reducer. so use combineReducers() for multiple reducer.
+const rootReducer = combineReducers({
+  productR: productReducer,
+  cartR: cartReducer,
+});
+
+// store
+const store = createStore(rootReducer);
 store.subscribe(() => {
   console.log(store.getState());
 });
 
-store.dispatch(incrementCounterAction());
-store.dispatch(incrementCounterAction());
-store.dispatch(decrementCounterAction());
-store.dispatch(resetCounterAction());
-store.dispatch(incrementCounterByValue(15));
+store.dispatch(getProducts());
+store.dispatch(addProudct("pen"));
+
+store.dispatch(getCart());
+store.dispatch(addCart("pen"));
