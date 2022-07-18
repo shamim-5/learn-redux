@@ -1,11 +1,9 @@
 import './App.css';
-import Todos from './components/Todos';
 
 function App() {
   return (
     <div className="App">
-      <h1>Hello Redux</h1>
-      <Todos />
+      <h1>Counter App</h1>
     </div>
   );
 }
